@@ -208,10 +208,10 @@ while running:
 
         enemyY[i] += enemyY_change[i]
         if enemyY[i] <= 0:
-            enemyY_change[i] = 9
+            enemyY_change[i] = 11
             enemyX[i] += enemyX_change[i]
         elif enemyY[i] >= 536:  # take into account width of enemy
-            enemyY_change[i] = -9
+            enemyY_change[i] = -11
             enemyX[i] += enemyX_change[i]
 
         # Collision
