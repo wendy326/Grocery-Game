@@ -42,6 +42,14 @@ enemyX_change = []
 enemyY_change = []
 num_of_enemies = 8
 
+# Mask
+maskImg = []
+maskX = []
+maskY = []
+maskX_change = []
+maskY_change = []
+num_of_masks = 8
+
 for i in range(num_of_enemies):
     enemyImg.append(pygame.image.load('alien.png')) # 64x64 PNG
     enemyX.append(random.randint(400,735)) # x coordinate
@@ -60,7 +68,12 @@ bullet_state = "ready"
 # fire - bullet is currently moving
 
 # Mask
-"""Add code here"""
+for i in range(num_of_masks):
+    maskImg.append(pygame.image.load('face-mask.png')) # 64x64 PNG
+    maskX.append(random.randint(400,735)) # x coordinate
+    maskY.append(random.randint(70,530)) # y coordinate
+    maskX_change.append(-40)
+    maskY_change.append(6)
 
 # Score
 score_value = 0
@@ -85,6 +98,9 @@ def player(x,y):
 
 def enemy(x,y,i):
     screen.blit(enemyImg[i], (x, y))
+
+def mask(x,y,i):
+    screen.blit(maskImg[i], (x, y))
 
 def fire_bullet(x,y):
     global bullet_state
@@ -173,6 +189,31 @@ while running:
             enemyY[i] = random.randint(50, 150)  # y coordinate
 
         enemy(enemyX[i], enemyY[i], i)
+
+    # Mask Movement
+    for i in range(num_of_masks):
+        maskY[i] += maskY_change[i]
+        if maskY[i] <= 0:
+            maskY_change[i] = 6
+            maskX[i] += maskX_change[i]
+        elif maskY[i] >= 536: #take into account width of rocket
+            maskY_change[i] = -6.0
+            maskX[i] += maskX_change[i]
+
+        # Collision
+        collision = isCollision(maskX[i], maskY[i], bulletX, bulletY)
+        if collision:
+            # explosion_Sound = mixer.Sound()
+            # explosion_Sound.play()
+            bulletY = 480  # reset bullet position
+            bullet_state = "ready"
+            score_value += 1
+            print(score_value)
+            # respawn enemy
+            maskX[i] = random.randint(0, 735)  # x coordinate
+            maskY[i] = random.randint(50, 150)  # y coordinate
+
+        mask(maskX[i], maskY[i], i)
 
     player(playerX, playerY) # we want to call player after screen.fill method because we draw screen, then draw player on top
     show_score(textX, textY)
