@@ -107,14 +107,6 @@ def show_health(x, y):
     pygame.draw.rect(screen,(0, 0, 0),(10,10,304,20), 0)
     pygame.draw.rect(screen,(0, 204, 0),(12,12,health_value,16), 0)
 
-def draw_health(screen, x, y, health_value, image):
-    for i in range(lives):
-        img_rect = image.get_rect()
-        img_rect.x = x + 30 * i
-        img_rect.y = y
-        screen.blit(image, img_rect)
-    
-
 # Game Over Text
 over_font = pygame.font.Font('freesansbold.ttf', 64)
 
