@@ -15,6 +15,9 @@ screen = pygame.display.set_mode((800, 600))
 
 """screen stays for one second but then goes away, so create while loop"""
 
+# Create bar for health
+#bar_bkg = pygame.draw.rect(screen,(0, 0, 255),(200,150,100,50), 0)
+
 # Title and Icon
 """ Download icon from flaticon.com. We can design this. Select 32px version PNG."""
 pygame.display.set_caption("Viralventure")  # set title
@@ -81,8 +84,8 @@ score_value = 0
 font = pygame.font.Font('freesansbold.ttf',
                         20)  # establishes free font that will be used, 32 is font size. To find other fonts, just Google free fonts of extension ttf and download them. You can go to dafont.com.
 
-textX = 200
-textY = 15
+textX = 10
+textY = 40
 
 
 def show_score(x, y):
@@ -91,18 +94,26 @@ def show_score(x, y):
 
 
 # Health
-health_value = 100
-font = pygame.font.Font('freesansbold.ttf',
-                        20)  # establishes free font that will be used, 32 is font size. To find other fonts, just Google free fonts of extension ttf and download them. You can go to dafont.com.
+health_value = 300
+font = pygame.font.Font('freesansbold.ttf', 20)  # establishes free font that will be used, 32 is font size. To find other fonts, just Google free fonts of extension ttf and download them. You can go to dafont.com.
 
-healthX = 10
+healthX = 300
 healthY = 15
 
-
+#def health_bar(screen, )
 def show_health(x, y):
-    health = font.render("Health: " + str(health_value), True, (0, 0, 0))  # first render, then blit
-    screen.blit(health, (x, y))
+    # health = font.render("Health: " + str(health_value), True, (0, 0, 0))  # first render, then blit
+    # screen.blit(health, (x, y))
+    pygame.draw.rect(screen,(0, 0, 0),(10,10,304,20), 0)
+    pygame.draw.rect(screen,(0, 204, 0),(12,12,health_value,16), 0)
 
+def draw_health(screen, x, y, health_value, image):
+    for i in range(lives):
+        img_rect = image.get_rect()
+        img_rect.x = x + 30 * i
+        img_rect.y = y
+        screen.blit(image, img_rect)
+    
 
 # Game Over Text
 over_font = pygame.font.Font('freesansbold.ttf', 64)
@@ -234,7 +245,7 @@ while running:
         if hitEnemytoChar:
             # explosion_Sound = mixer.Sound()
             # explosion_Sound.play()
-            health_value -= 10
+            health_value -= 30
             #print(health_value)
             # respawn enemy
             enemyX[i] = random.randint(300, 735)  # x coordinate
@@ -271,7 +282,7 @@ while running:
         if hitMasktoChar:
             # explosion_Sound = mixer.Sound()
             # explosion_Sound.play()
-            health_value += 10
+            health_value += 30
             print(health_value)
             #print(playerX)
             # respawn mask
