@@ -10,14 +10,14 @@ import math
 pygame.init()
 
 # Create the screen: 800 is width, 600 is height
-screen = pygame.display.set_mode((800, 600))
+screen = pygame.display.set_mode((800, 480))
 
 """screen stays for one second but then goes away, so create while loop"""
 
 # Title and Icon
 """ Download icon from flaticon.com. We can design this. Select 32px version PNG."""
 pygame.display.set_caption("Viralventure") # set title
-icon = pygame.image.load('spaceship.png')
+icon = pygame.image.load('virus.png')
 pygame.display.set_icon(icon) # makes sure icon has been added
 
 # Background Image
@@ -51,7 +51,7 @@ maskY_change = []
 num_of_masks = 4
 
 for i in range(num_of_enemies):
-    enemyImg.append(pygame.image.load('alien.png')) # 64x64 PNG
+    enemyImg.append(pygame.image.load('virus.png')) # 64x64 PNG
     enemyX.append(random.randint(400,735)) # x coordinate
     enemyY.append(random.randint(70,530)) # y coordinate
     enemyX_change.append(-40)
@@ -69,7 +69,7 @@ bullet_state = "ready"
 
 # Mask
 for i in range(num_of_masks):
-    maskImg.append(pygame.image.load('bullet.png')) # 64x64 PNG
+    maskImg.append(pygame.image.load('face-mask.png')) # 64x64 PNG
     maskX.append(random.randint(400,735)) # x coordinate
     maskY.append(random.randint(70,530)) # y coordinate
     maskX_change.append(-40)
@@ -77,14 +77,25 @@ for i in range(num_of_masks):
 
 # Score
 score_value = 0
-font = pygame.font.Font('freesansbold.ttf',32) # establishes free font that will be used, 32 is font size. To find other fonts, just Google free fonts of extension ttf and download them. You can go to dafont.com.
+font = pygame.font.Font('freesansbold.ttf',20) # establishes free font that will be used, 32 is font size. To find other fonts, just Google free fonts of extension ttf and download them. You can go to dafont.com.
 
 textX = 200
-textY = 250
+textY = 15
 
 def show_score(x,y):
     score = font.render("Score: " + str(score_value), True, (0, 0, 0)) # first render, then blit
     screen.blit(score, (x, y))
+
+# Health
+health_value = 100
+font = pygame.font.Font('freesansbold.ttf',20) # establishes free font that will be used, 32 is font size. To find other fonts, just Google free fonts of extension ttf and download them. You can go to dafont.com.
+
+healthX = 10
+healthY = 15
+
+def show_health(x,y):
+    health = font.render("Health: " + str(health_value), True, (0, 0, 0)) # first render, then blit
+    screen.blit(health, (x, y))
 
 # Game Over Text
 over_font = pygame.font.Font('freesansbold.ttf', 64)
@@ -109,6 +120,13 @@ def fire_bullet(x,y):
 
 def isCollision(enemyX, enemyY, bulletX, bulletY):
     distance = math.sqrt(math.pow(enemyX-bulletX,2)+math.pow(enemyY-bulletY,2)) # distance formula
+    if distance < 27:
+        return True
+    else:
+        return False
+
+def hitChar(enemyX, enemyY, playerX, playerY):
+    distance = math.sqrt(math.pow(enemyX-playerX,2)+math.pow(enemyY-playerY,2)) # distance formula
     if distance < 27:
         return True
     else:
@@ -178,12 +196,28 @@ while running:
         # Collision
         collision = isCollision(enemyX[i], enemyY[i], bulletX, bulletY)
         if collision:
+            if bulletX == 0:
+                break
+            else:
+                # explosion_Sound = mixer.Sound()
+                # explosion_Sound.play()
+                bulletX = 0  # reset bullet position
+                bullet_state = "ready"
+                score_value += 1
+                print(score_value)
+                # respawn enemy/mask
+                enemyX[i] = random.randint(300, 735)  # x coordinate
+                enemyY[i] = random.randint(80, 500)  # y coordinate
+
+        enemy(enemyX[i], enemyY[i], i)
+
+        # virus hits player
+        hit = hitChar(enemyX[i], enemyY[i], playerX, playerY)
+        if hit:
             # explosion_Sound = mixer.Sound()
             # explosion_Sound.play()
-            bulletX = 0  # reset bullet position
-            bullet_state = "ready"
-            score_value += 1
-            print(score_value)
+            health_value -= 10
+            print(health_value)
             # respawn enemy
             enemyX[i] = random.randint(300, 735)  # x coordinate
             enemyY[i] = random.randint(80, 500)  # y coordinate
@@ -208,11 +242,26 @@ while running:
             bulletX = 0  # reset bullet position
             bullet_state = "ready"
             # respawn mask
+            num_of_masks -= 1
             maskX[i] = random.randint(0, 735)  # x coordinate
             maskY[i] = random.randint(50, 150)  # y coordinate
+
+        mask(maskX[i], maskY[i], i)
+        
+        # mask hits player
+        hit = hitChar(maskX[i], maskY[i], playerX, playerY)
+        if hit:
+            # explosion_Sound = mixer.Sound()
+            # explosion_Sound.play()
+            health_value += 10
+            print(health_value)
+            # respawn mask
+            maskX[i] = random.randint(300, 735)  # x coordinate
+            maskY[i] = random.randint(80, 500)  # y coordinate
 
         mask(maskX[i], maskY[i], i)
 
     player(playerX, playerY) # we want to call player after screen.fill method because we draw screen, then draw player on top
     show_score(textX, textY)
+    show_health(healthX, healthY)
     pygame.display.update() # make sure display is always updating
