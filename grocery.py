@@ -5,7 +5,7 @@ import pygame
 import random
 import math
 
-# from pygame import mixer
+from pygame import mixer
 
 """Initialize pygame module so you can access its cool features and modules"""
 pygame.init()
@@ -29,8 +29,8 @@ pygame.display.set_icon(icon)  # makes sure icon has been added
 background = pygame.image.load('background.png')
 
 # Background Sound
-# mixer.music.load()
-# mixer.music.play(-1) # adding -1 will make it play on loop
+mixer.music.load('background.mp3')
+mixer.music.play(-1) # adding -1 will make it play on loop
 
 # Player
 playerImg = pygame.image.load('bigcharacter.png')  # 64x64 PNG
@@ -169,8 +169,8 @@ while running:
                 playerY_change = 8.5
             if event.key == pygame.K_SPACE:
                 if bullet_state is "ready":  # ensures hitting space bar repeatedly doesn't change preexisting bullet's position
-                    # bullet_Sound = mixer.Sound()
-                    # bullet_Sound.play()
+                    pygame.mixer.music.load('bulletSound.mp3')
+                    pygame.mixer.music.play()
                     bulletY = playerY  # ensures bullet starts where Y is, but bulletY does not change when playerY does
                     fire_bullet(bulletX, bulletY)
         if event.type == pygame.KEYUP:
@@ -220,8 +220,8 @@ while running:
             if bulletX == 0:
                 break
             else:
-                # explosion_Sound = mixer.Sound()
-                # explosion_Sound.play()
+                pygame.mixer.music.load('collisionSound.mp3')
+                pygame.mixer.music.play()
                 bulletX = 0  # reset bullet position
                 bullet_state = "ready"
                 score_value += 1
@@ -235,8 +235,8 @@ while running:
         # virus hits player
         hitEnemytoChar = hitChar(enemyX[i], enemyY[i], playerX, playerY, 37)
         if hitEnemytoChar:
-            # explosion_Sound = mixer.Sound()
-            # explosion_Sound.play()
+            pygame.mixer.music.load('virusCollide.mp3')
+            pygame.mixer.music.play()
             health_value -= 30
             #print(health_value)
             # respawn enemy
@@ -258,8 +258,8 @@ while running:
         # Collision
         collisionMask = isCollision(maskX[i], maskY[i], bulletX, bulletY)
         if collisionMask:
-            # explosion_Sound = mixer.Sound()
-            # explosion_Sound.play()
+            pygame.mixer.music.load('bulletMaskCollide.mp3')
+            pygame.mixer.music.play()
             bulletX = 0  # reset bullet position
             bullet_state = "ready"
             # respawn mask
@@ -272,8 +272,8 @@ while running:
         # mask hits player
         hitMasktoChar = hitChar(maskX[i], maskY[i], playerX, playerY, 30)
         if hitMasktoChar:
-            # explosion_Sound = mixer.Sound()
-            # explosion_Sound.play()
+            pygame.mixer.music.load('maskCollide.mp3')
+            pygame.mixer.music.play()
             health_value += 30
             print(health_value)
             #print(playerX)
