@@ -29,7 +29,7 @@ background = pygame.image.load('background.png')
 #mixer.music.play(-1) # adding -1 will make it play on loop
 
 # Player
-playerImg = pygame.image.load('rocket.png') # 64x64 PNG
+playerImg = pygame.image.load('bigcharacter.png') # 64x64 PNG
 playerX = 20 # x coordinate
 playerY = 250 # y coordinate
 playerY_change = 0
@@ -48,7 +48,7 @@ maskX = []
 maskY = []
 maskX_change = []
 maskY_change = []
-num_of_masks = 8
+num_of_masks = 4
 
 for i in range(num_of_enemies):
     enemyImg.append(pygame.image.load('alien.png')) # 64x64 PNG
@@ -58,18 +58,18 @@ for i in range(num_of_enemies):
     enemyY_change.append(6)
 
 # Hand Sanitizer
-bulletImg = pygame.image.load('bullet.png') # 32x32 PNG
+bulletImg = pygame.image.load('sanitizer.png') # 32x32 PNG
 bulletX = 0 # x coordinate
-bulletY = 480 # y coordinate
-bulletX_change = 4
-bulletY_change = 10
+bulletY = 250 # y coordinate
+bulletX_change = 15
+bulletY_change = 0
 bullet_state = "ready"
 # ready - you can't see bullet on the screen
 # fire - bullet is currently moving
 
 # Mask
 for i in range(num_of_masks):
-    maskImg.append(pygame.image.load('face-mask.png')) # 64x64 PNG
+    maskImg.append(pygame.image.load('bullet.png')) # 64x64 PNG
     maskX.append(random.randint(400,735)) # x coordinate
     maskY.append(random.randint(70,530)) # y coordinate
     maskX_change.append(-40)
@@ -83,7 +83,7 @@ textX = 200
 textY = 250
 
 def show_score(x,y):
-    score = font.render("Score: " + str(score_value), True, (255, 255, 255)) # first render, then blit
+    score = font.render("Score: " + str(score_value), True, (0, 0, 0)) # first render, then blit
     screen.blit(score, (x, y))
 
 # Game Over Text
@@ -105,7 +105,7 @@ def mask(x,y,i):
 def fire_bullet(x,y):
     global bullet_state
     bullet_state = "fire"
-    screen.blit(bulletImg,(x+16,y+10)) # + 16 to center bullet, + 10 to make bullet fire from "top"
+    screen.blit(bulletImg,(x+100,y)) # + 16 to center bullet, + 10 to make bullet fire from "top"
 
 def isCollision(enemyX, enemyY, bulletX, bulletY):
     distance = math.sqrt(math.pow(enemyX-bulletX,2)+math.pow(enemyY-bulletY,2)) # distance formula
@@ -134,27 +134,27 @@ while running:
                 if bullet_state is "ready": # ensures hitting space bar repeatedly doesn't change preexisting bullet's position
                     #bullet_Sound = mixer.Sound()
                     #bullet_Sound.play()
-                    bulletX = playerX # ensures bullet starts where X is, but bulletX does not change when playerX does
+                    bulletY = playerY # ensures bullet starts where Y is, but bulletY does not change when playerY does
                     fire_bullet(bulletX, bulletY)
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                 playerY_change = 0
 
     # Bullet Movement
-    if bulletY <= 0:
-        bulletY = 480
+    if bulletX >= 700:
+        bulletX = 0
         bullet_state = "ready"
     if bullet_state is "fire": # ensures bullet appears
         fire_bullet(bulletX, bulletY)
-        bulletY -= bulletY_change
+        bulletX += bulletX_change
 
     # Player Movement
     """add boundaries so player doesn't leave screen"""
     playerY += playerY_change
     if playerY <= 0:
         playerY = 0
-    elif playerY >= 536: #take into account width of rocket
-        playerY = 536
+    elif playerY >= 500: #take into account width of rocket
+        playerY = 500
 
     # Enemy Movement
     """add boundaries so enemy doesn't leave screen and changes direction"""
@@ -171,7 +171,7 @@ while running:
         if enemyY[i] <= 0:
             enemyY_change[i] = 6
             enemyX[i] += enemyX_change[i]
-        elif enemyY[i] >= 536: #take into account width of rocket
+        elif enemyY[i] >= 536: #take into account width of enemy
             enemyY_change[i] = -6.0
             enemyX[i] += enemyX_change[i]
 
@@ -180,13 +180,13 @@ while running:
         if collision:
             # explosion_Sound = mixer.Sound()
             # explosion_Sound.play()
-            bulletY = 480  # reset bullet position
+            bulletX = 0  # reset bullet position
             bullet_state = "ready"
             score_value += 1
             print(score_value)
             # respawn enemy
-            enemyX[i] = random.randint(0, 735)  # x coordinate
-            enemyY[i] = random.randint(50, 150)  # y coordinate
+            enemyX[i] = random.randint(300, 735)  # x coordinate
+            enemyY[i] = random.randint(80, 500)  # y coordinate
 
         enemy(enemyX[i], enemyY[i], i)
 
@@ -201,15 +201,13 @@ while running:
             maskX[i] += maskX_change[i]
 
         # Collision
-        collision = isCollision(maskX[i], maskY[i], bulletX, bulletY)
-        if collision:
+        collisionMask = isCollision(maskX[i], maskY[i], bulletX, bulletY)
+        if collisionMask:
             # explosion_Sound = mixer.Sound()
             # explosion_Sound.play()
-            bulletY = 480  # reset bullet position
+            bulletX = 0  # reset bullet position
             bullet_state = "ready"
-            score_value += 1
-            print(score_value)
-            # respawn enemy
+            # respawn mask
             maskX[i] = random.randint(0, 735)  # x coordinate
             maskY[i] = random.randint(50, 150)  # y coordinate
 
@@ -218,7 +216,3 @@ while running:
     player(playerX, playerY) # we want to call player after screen.fill method because we draw screen, then draw player on top
     show_score(textX, textY)
     pygame.display.update() # make sure display is always updating
-
-
-
-
