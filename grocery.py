@@ -4,6 +4,7 @@
 import pygame
 import random
 import math
+from pygame import MOUSEBUTTONDOWN
 
 from pygame import mixer
 
@@ -12,6 +13,52 @@ pygame.init()
 
 # Create the screen: 800 is width, 600 is height
 screen = pygame.display.set_mode((800, 600))
+clock = pygame.time.Clock()
+
+white = (255, 255, 255)
+black = (0, 0, 0)
+
+def game_intro():
+    intro = True
+    click = False
+
+    while intro:
+        screen.fill(white)
+        largeTextFont = pygame.font.Font('gomarice_round_pop.ttf', 90)
+        intro_text = largeTextFont.render("Viralventure", True, (80, 235, 50))  # first render, then blit
+        screen.blit(intro_text, (75, 100))  # middle of screen
+        myfont = pygame.font.Font('freesansbold.ttf', 25)
+        instructions1 = myfont.render("Help Harry collect his masks to stay alive!", True, (0, 0, 0))
+        instructions2 = myfont.render("Spray hand sanitizer at curmudgeonly coronaviruses — ", True, (0, 0, 0))
+        instructions22 = myfont.render("but don’t spray the masks because you need them!", True, (0, 0, 0))
+        instructions3 = myfont.render("Use space bar to spray and up and down arrow keys", True, (0, 0, 0))
+        instructions33 = myfont.render("to move through the store aisles.", True, (0, 0, 0))
+        instructions4 = myfont.render("See how long you can help Harry stay alive", True, (0, 0, 0))
+        instructions5 = myfont.render("and take down COVID-19!", True, (0, 0, 0))
+        screen.blit(instructions1, (150, 200))
+        screen.blit(instructions2, (70, 240))
+        screen.blit(instructions22, (100, 270))
+        screen.blit(instructions3, (80, 310))
+        screen.blit(instructions33, (200, 340))
+        screen.blit(instructions4, (120, 380))
+        screen.blit(instructions5, (210, 410))
+        mx, my = pygame.mouse.get_pos()
+        button_start = pygame.Rect(400, 500, 100, 50)
+        if button_start.collidepoint((mx, my)):
+            if click:
+                game_loop()
+
+        pygame.draw.rect(screen, (255, 0, 0), button_start)
+
+        click = False
+        for event in pygame.event.get():
+            if event.type == MOUSEBUTTONDOWN:
+                click = True
+
+            elif event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+        pygame.display.update()
 
 """screen stays for one second but then goes away, so create while loop"""
 
@@ -151,140 +198,150 @@ def hitChar(X, Y, playerX, playerY, hitDistance):
 
 
 # Game Loop
-running = True
-while running:
-    screen.fill((0, 0, 0))  # RGB = Red, Green, Blue
-    # background image
-    screen.blit(background,
-                (0, 0))  # loading background image slows down speed of player and enemy, so increase their changes
-    for event in pygame.event.get():  # loop through all events happening in game window
-        if event.type == pygame.QUIT:  # check to see if close button is pressed
-            running = False
+def game_loop():
+    running = True
+    while running:
+        global bulletX
+        global bulletY
+        global bullet_state
+        global playerY
+        global playerY_change
+        screen.fill((0, 0, 0))  # RGB = Red, Green, Blue
+        # background image
+        screen.blit(background,
+                    (0, 0))  # loading background image slows down speed of player and enemy, so increase their changes
+        for event in pygame.event.get():  # loop through all events happening in game window
+            if event.type == pygame.QUIT:  # check to see if close button is pressed
+                running = False
 
-        """if a keystroke is pressed, check whether it's right or left"""
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
-                playerY_change = -8.5
-            if event.key == pygame.K_DOWN:
-                playerY_change = 8.5
-            if event.key == pygame.K_SPACE:
-                if bullet_state is "ready":  # ensures hitting space bar repeatedly doesn't change preexisting bullet's position
-                    bullet_Sound = mixer.Sound('bulletSound.ogg')
-                    bullet_Sound.play()
-                    bulletY = playerY  # ensures bullet starts where Y is, but bulletY does not change when playerY does
-                    fire_bullet(bulletX, bulletY)
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
-                playerY_change = 0
+            """if a keystroke is pressed, check whether it's right or left"""
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    playerY_change = -8.5
+                if event.key == pygame.K_DOWN:
+                    playerY_change = 8.5
+                if event.key == pygame.K_SPACE:
+                    if bullet_state is "ready":  # ensures hitting space bar repeatedly doesn't change preexisting bullet's position
+                        bullet_Sound = mixer.Sound('bulletSound.ogg')
+                        bullet_Sound.play()
+                        bulletY = playerY  # ensures bullet starts where Y is, but bulletY does not change when playerY does
+                        fire_bullet(bulletX, bulletY)
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
+                    playerY_change = 0
 
-    # Bullet Movement
-    if bulletX >= 700:
-        bulletX = 0
-        bullet_state = "ready"
-    if bullet_state is "fire":  # ensures bullet appears
-        fire_bullet(bulletX, bulletY)
-        bulletX += bulletX_change
+        # Bullet Movement
+        if bulletX >= 700:
+            bulletX = 0
+            bullet_state = "ready"
+        if bullet_state is "fire":  # ensures bullet appears
+            fire_bullet(bulletX, bulletY)
+            bulletX += bulletX_change
 
-    # Player Movement
-    """add boundaries so player doesn't leave screen"""
-    playerY += playerY_change
-    if playerY <= 0:
-        playerY = 0
-    elif playerY >= 500:  # take into account width of rocket
-        playerY = 500
+        # Player Movement
+        """add boundaries so player doesn't leave screen"""
+        playerY += playerY_change
+        if playerY <= 0:
+            playerY = 0
+        elif playerY >= 500:  # take into account width of rocket
+            playerY = 500
 
-    # Enemy Movement
-    """add boundaries so enemy doesn't leave screen and changes direction"""
-    for i in range(num_of_enemies):
+        # Enemy Movement
+        """add boundaries so enemy doesn't leave screen and changes direction"""
+        for i in range(num_of_enemies):
 
-        #Game Over
-        if health_value == 0:
-             for j in range(num_of_enemies):
-                 enemyY[j] = 2000 # ensures enemies go below screen
-             for k in range(num_of_masks):
-                 maskY[k] = 2000 # ensures masks go below screen
-             game_over_text(200, 250)
-             break
+            #Game Over
+            global health_value
+            global num_of_masks
+            if health_value == 0:
+                 for j in range(num_of_enemies):
+                     enemyY[j] = 2000 # ensures enemies go below screen
+                 for k in range(num_of_masks):
+                     maskY[k] = 2000 # ensures masks go below screen
+                 game_over_text(200, 250)
+                 break
 
-        enemyY[i] += enemyY_change[i]
-        if enemyY[i] <= 0:
-            enemyY_change[i] = 11
-            enemyX[i] += enemyX_change[i]
-        elif enemyY[i] >= 536:  # take into account width of enemy
-            enemyY_change[i] = -11
-            enemyX[i] += enemyX_change[i]
+            enemyY[i] += enemyY_change[i]
+            if enemyY[i] <= 0:
+                enemyY_change[i] = 11
+                enemyX[i] += enemyX_change[i]
+            elif enemyY[i] >= 536:  # take into account width of enemy
+                enemyY_change[i] = -11
+                enemyX[i] += enemyX_change[i]
 
-        # Collision
-        collision = isCollision(enemyX[i], enemyY[i], bulletX, bulletY)
-        if collision:
-            if bulletX == 0:
-                break
-            else:
-                collisionSound = mixer.Sound('collisionSound.ogg')
-                collisionSound.play()
-                bulletX = 0  # reset bullet position
-                bullet_state = "ready"
-                score_value += 1
-                #print(score_value)
-                # respawn enemy/mask
+            # Collision
+            global score_value
+            collision = isCollision(enemyX[i], enemyY[i], bulletX, bulletY)
+            if collision:
+                if bulletX == 0:
+                    break
+                else:
+                    collisionSound = mixer.Sound('collisionSound.ogg')
+                    collisionSound.play()
+                    bulletX = 0  # reset bullet position
+                    bullet_state = "ready"
+                    score_value += 1
+                    #print(score_value)
+                    # respawn enemy/mask
+                    enemyX[i] = random.randint(300, 735)  # x coordinate
+                    enemyY[i] = random.randint(80, 500)  # y coordinate
+
+            enemy(enemyX[i], enemyY[i], i)
+
+            # virus hits player
+            hitEnemytoChar = hitChar(enemyX[i], enemyY[i], playerX, playerY, 37)
+            if hitEnemytoChar:
+                virusCollide = mixer.Sound('virusCollide.ogg')
+                virusCollide.play()
+                health_value -= 30
+                #print(health_value)
+                # respawn enemy
                 enemyX[i] = random.randint(300, 735)  # x coordinate
                 enemyY[i] = random.randint(80, 500)  # y coordinate
 
-        enemy(enemyX[i], enemyY[i], i)
+            enemy(enemyX[i], enemyY[i], i)
 
-        # virus hits player
-        hitEnemytoChar = hitChar(enemyX[i], enemyY[i], playerX, playerY, 37)
-        if hitEnemytoChar:
-            virusCollide = mixer.Sound('virusCollide.ogg')
-            virusCollide.play()
-            health_value -= 30
-            #print(health_value)
-            # respawn enemy
-            enemyX[i] = random.randint(300, 735)  # x coordinate
-            enemyY[i] = random.randint(80, 500)  # y coordinate
+        # Mask Movement
+        for i in range(num_of_masks):
+            maskY[i] += maskY_change[i]
+            if maskY[i] <= 0:
+                maskY_change[i] = 6
+                maskX[i] += maskX_change[i]
+            elif maskY[i] >= 536:  # take into account width of rocket
+                maskY_change[i] = -6.0
+                maskX[i] += maskX_change[i]
 
-        enemy(enemyX[i], enemyY[i], i)
+            # Collision
+            collisionMask = isCollision(maskX[i], maskY[i], bulletX, bulletY)
+            if collisionMask:
+                bulletMaskCollide = mixer.Sound('bulletMaskCollide.ogg')
+                bulletMaskCollide.play()
+                bulletX = 0  # reset bullet position
+                bullet_state = "ready"
+                # respawn mask
+                num_of_masks -= 1
+                maskX[i] = random.randint(0, 735)  # x coordinate
+                maskY[i] = random.randint(50, 150)  # y coordinate
 
-    # Mask Movement
-    for i in range(num_of_masks):
-        maskY[i] += maskY_change[i]
-        if maskY[i] <= 0:
-            maskY_change[i] = 6
-            maskX[i] += maskX_change[i]
-        elif maskY[i] >= 536:  # take into account width of rocket
-            maskY_change[i] = -6.0
-            maskX[i] += maskX_change[i]
+            mask(maskX[i], maskY[i], i)
 
-        # Collision
-        collisionMask = isCollision(maskX[i], maskY[i], bulletX, bulletY)
-        if collisionMask:
-            bulletMaskCollide = mixer.Sound('bulletMaskCollide.ogg')
-            bulletMaskCollide.play()
-            bulletX = 0  # reset bullet position
-            bullet_state = "ready"
-            # respawn mask
-            num_of_masks -= 1
-            maskX[i] = random.randint(0, 735)  # x coordinate
-            maskY[i] = random.randint(50, 150)  # y coordinate
+            # mask hits player
+            hitMasktoChar = hitChar(maskX[i], maskY[i], playerX, playerY, 30)
+            if hitMasktoChar:
+                maskCollide = mixer.Sound('maskCollide.ogg')
+                maskCollide.play()
+                health_value += 30
+                print(health_value)
+                #print(playerX)
+                # respawn mask
+                maskX[i] = random.randint(400, 735)  # x coordinate
+                maskY[i] = random.randint(80, 500)  # y coordinate
 
-        mask(maskX[i], maskY[i], i)
+            mask(maskX[i], maskY[i], i)
 
-        # mask hits player
-        hitMasktoChar = hitChar(maskX[i], maskY[i], playerX, playerY, 30)
-        if hitMasktoChar:
-            maskCollide = mixer.Sound('maskCollide.ogg')
-            maskCollide.play()
-            health_value += 30
-            print(health_value)
-            #print(playerX)
-            # respawn mask
-            maskX[i] = random.randint(400, 735)  # x coordinate
-            maskY[i] = random.randint(80, 500)  # y coordinate
-
-        mask(maskX[i], maskY[i], i)
-
-    player(playerX,
-           playerY)  # we want to call player after screen.fill method because we draw screen, then draw player on top
-    show_score(textX, textY)
-    show_health(healthX, healthY)
-    pygame.display.update()  # make sure display is always updating
+        player(playerX,
+               playerY)  # we want to call player after screen.fill method because we draw screen, then draw player on top
+        show_score(textX, textY)
+        show_health(healthX, healthY)
+        pygame.display.update()  # make sure display is always updating
+game_intro()
