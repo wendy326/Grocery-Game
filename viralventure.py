@@ -15,7 +15,7 @@ pygame.init()
 screen = pygame.display.set_mode((800, 600))
 clock = pygame.time.Clock()
 
-white = (255, 255, 255)
+white = (255, 255, 153)
 black = (0, 0, 0)
 
 def game_intro():
@@ -27,21 +27,21 @@ def game_intro():
         largeTextFont = pygame.font.Font('gomarice_round_pop.ttf', 90)
         intro_text = largeTextFont.render("Viralventure", True, (80, 235, 50))  # first render, then blit
         screen.blit(intro_text, (75, 100))  # middle of screen
-        myfont = pygame.font.Font('freesansbold.ttf', 25)
+        myfont = pygame.font.Font('gomarice_round_pop.ttf', 25)
         instructions1 = myfont.render("Help Harry collect his masks to stay alive!", True, (0, 0, 0))
-        instructions2 = myfont.render("Spray hand sanitizer at curmudgeonly coronaviruses — ", True, (0, 0, 0))
+        instructions2 = myfont.render("Spray hand sanitizer at curmudgeonly coronaviruses, ", True, (0, 0, 0))
         instructions22 = myfont.render("but don’t spray the masks because you need them!", True, (0, 0, 0))
         instructions3 = myfont.render("Use space bar to spray and up and down arrow keys", True, (0, 0, 0))
         instructions33 = myfont.render("to move through the store aisles.", True, (0, 0, 0))
         instructions4 = myfont.render("See how long you can help Harry stay alive", True, (0, 0, 0))
         instructions5 = myfont.render("and take down COVID-19!", True, (0, 0, 0))
-        screen.blit(instructions1, (150, 200))
-        screen.blit(instructions2, (70, 240))
-        screen.blit(instructions22, (100, 270))
-        screen.blit(instructions3, (80, 310))
-        screen.blit(instructions33, (200, 340))
-        screen.blit(instructions4, (120, 380))
-        screen.blit(instructions5, (210, 410))
+        screen.blit(instructions1, (85, 200))
+        screen.blit(instructions2, (40, 240))
+        screen.blit(instructions22, (70, 270))
+        screen.blit(instructions3, (50, 310))
+        screen.blit(instructions33, (160, 340))
+        screen.blit(instructions4, (110, 380))
+        screen.blit(instructions5, (220, 410))
         mx, my = pygame.mouse.get_pos()
         button_start = pygame.Rect(400, 500, 100, 50)
         if button_start.collidepoint((mx, my)):
@@ -128,7 +128,7 @@ for i in range(num_of_masks):
 
 # Score
 score_value = 0
-font = pygame.font.Font('freesansbold.ttf',
+font = pygame.font.Font('gomarice_round_pop.ttf',
                         20)  # establishes free font that will be used, 32 is font size. To find other fonts, just Google free fonts of extension ttf and download them. You can go to dafont.com.
 
 textX = 10
@@ -142,15 +142,12 @@ def show_score(x, y):
 
 # Health
 health_value = 300
-font = pygame.font.Font('freesansbold.ttf', 20)  # establishes free font that will be used, 32 is font size. To find other fonts, just Google free fonts of extension ttf and download them. You can go to dafont.com.
 
 healthX = 300
 healthY = 15
 
 #def health_bar(screen, )
 def show_health(x, y):
-    # health = font.render("Health: " + str(health_value), True, (0, 0, 0))  # first render, then blit
-    # screen.blit(health, (x, y))
     pygame.draw.rect(screen,(0, 0, 0),(10,10,304,20), 0)
     pygame.draw.rect(screen,(0, 204, 0),(12,12,health_value,16), 0)
 
