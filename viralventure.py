@@ -1,4 +1,3 @@
-# https://www.youtube.com/watch?v=FfWpgLFMI7w
 # Make sure you install pygame into your python editor, specific to your project directory. Also make sure you install from Terminal first: pip install pygame
 
 import pygame
@@ -35,7 +34,7 @@ def game_intro():
         instructions33 = myfont.render("to move through the store aisles.", True, (0, 0, 0))
         instructions4 = myfont.render("See how long you can help Harry stay alive", True, (0, 0, 0))
         instructions5 = myfont.render("and take down COVID-19!", True, (0, 0, 0))
-        screen.blit(instructions1, (85, 200))
+        screen.blit(instructions1, (90, 200))
         screen.blit(instructions2, (40, 240))
         screen.blit(instructions22, (70, 270))
         screen.blit(instructions3, (50, 310))
@@ -43,12 +42,16 @@ def game_intro():
         screen.blit(instructions4, (110, 380))
         screen.blit(instructions5, (220, 410))
         mx, my = pygame.mouse.get_pos()
-        button_start = pygame.Rect(400, 500, 100, 50)
+        button_start = pygame.Rect(340, 500, 100, 50)
         if button_start.collidepoint((mx, my)):
             if click:
                 game_loop()
 
-        pygame.draw.rect(screen, (255, 0, 0), button_start)
+        pygame.draw.rect(screen, (80, 235, 50), button_start)
+
+        startFont = pygame.font.Font('freesansbold.ttf', 40)
+        start_text = startFont.render("Start", True, white)
+        screen.blit(start_text, button_start)
 
         click = False
         for event in pygame.event.get():
