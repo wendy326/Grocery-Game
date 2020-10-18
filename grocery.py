@@ -24,11 +24,26 @@ def game_intro():
 
     while intro:
         screen.fill(white)
-        largeTextFont = pygame.font.Font('freesansbold.ttf', 90)
-        intro_text = largeTextFont.render("Viralventure", True, (0, 0, 0))  # first render, then blit
-        screen.blit(intro_text, (125, 250))  # middle of screen
+        largeTextFont = pygame.font.Font('gomarice_round_pop.ttf', 90)
+        intro_text = largeTextFont.render("Viralventure", True, (80, 235, 50))  # first render, then blit
+        screen.blit(intro_text, (75, 100))  # middle of screen
+        myfont = pygame.font.Font('freesansbold.ttf', 25)
+        instructions1 = myfont.render("Help Harry collect his masks to stay alive!", True, (0, 0, 0))
+        instructions2 = myfont.render("Spray hand sanitizer at curmudgeonly coronaviruses — ", True, (0, 0, 0))
+        instructions22 = myfont.render("but don’t spray the masks because you need them!", True, (0, 0, 0))
+        instructions3 = myfont.render("Use space bar to spray and up and down arrow keys", True, (0, 0, 0))
+        instructions33 = myfont.render("to move through the store aisles.", True, (0, 0, 0))
+        instructions4 = myfont.render("See how long you can help Harry stay alive", True, (0, 0, 0))
+        instructions5 = myfont.render("and take down COVID-19!", True, (0, 0, 0))
+        screen.blit(instructions1, (150, 200))
+        screen.blit(instructions2, (70, 240))
+        screen.blit(instructions22, (100, 270))
+        screen.blit(instructions3, (80, 310))
+        screen.blit(instructions33, (200, 340))
+        screen.blit(instructions4, (120, 380))
+        screen.blit(instructions5, (210, 410))
         mx, my = pygame.mouse.get_pos()
-        button_start = pygame.Rect(400, 250, 100, 50)
+        button_start = pygame.Rect(400, 500, 100, 50)
         if button_start.collidepoint((mx, my)):
             if click:
                 game_loop()
